@@ -58,11 +58,6 @@
    git@gitlab.com:cpp-pilot-hse-2021/dept-group-Ivan-Ivanov-SuperVanechka1337.git
    ```
 
-1. Проинициализируйте свой приватный репозиторий
-   ```
-   git push -u student --all
-   ```
-
 ## Сдача задач
 
 Чтобы сдать задачу `task_name`, надо сделать следующие шаги:
