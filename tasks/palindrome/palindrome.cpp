@@ -2,19 +2,17 @@
 #include <string>
 
 bool IsPalindrome(const std::string& str) {
-    std::string good_str;
-    int str_size = str.size();
-    for (int i = 0; i < str_size; ++i) {
+    std::string str_without_spaces;
+    for (size_t i = 0; i < str.size(); ++i) {
         if (str[i] != ' ') {
-            good_str.push_back(str[i]);
+            str_without_spaces.push_back(str[i]);
         }
     }
-    int good_size = good_str.size();
-    bool flag = true;
-    for (int i = 0; i < (good_size / 2); ++i) {
-        if (good_str[i] != good_str[good_size - i - 1]) {
-            flag = false;
+    int good_size = str_without_spaces.size();
+    for (size_t i = 0; i < str_without_spaces.size() / 2; ++i) {
+        if (str_without_spaces[i] != str_without_spaces[str_without_spaces.size() - i - 1]) {
+            return false;
         }
     }
-    return flag;
+    return false;
 }
