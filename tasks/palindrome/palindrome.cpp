@@ -8,7 +8,6 @@ bool IsPalindrome(const std::string& str) {
             str_without_spaces.push_back(str[i]);
         }
     }
-    int good_size = str_without_spaces.size();
     for (size_t i = 0; i < str_without_spaces.size() / 2; ++i) {
         if (str_without_spaces[i] != str_without_spaces[str_without_spaces.size() - i - 1]) {
             return false;
