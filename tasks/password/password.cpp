@@ -5,26 +5,23 @@ bool ValidatePassword(const std::string& password) {
     if (pas_size < 8 || pas_size > 14) {
         return false;
     }
-    int big = 0;
-    int small = 0;
-    int digit = 0;
-    int other = 0;
+    bool big = false;
+    bool small = false;
+    bool digit = false;
+    bool other = false;
     for (int i = 0; i < pas_size; ++i) {
         char cur = password[i];
         if (cur < 33 || cur > 126) {
             return false;
         } else if (isdigit(cur)) {
-            digit = 1;
+            digit = true;
         } else if (isupper(cur)) {
-            big = 1;
+            big = true;
         } else if (islower(cur)) {
-            small = 1;
+            small = true;
         } else {
-            other = 1;
+            other = true;
         }
     }
-    if (digit + big + small + other < 3) {
-        return false;
-    }
-    return true;
+    return digit + big + small + other >= 3;
 }
