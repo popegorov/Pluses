@@ -2,7 +2,6 @@
 #include <deque>
 #include <vector>
 
-
 std::vector<std::string> StudentsOrder(const std::vector<StudentAction>& student_actions,
                                        const std::vector<size_t>& queries) {
     std::deque<std::string> tests;
