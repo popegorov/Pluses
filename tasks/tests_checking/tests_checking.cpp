@@ -14,7 +14,6 @@ std::vector<std::string> StudentsOrder(const std::vector<StudentAction>& student
     }
 
     std::vector<std::string> student_check;
-
     for (const auto& test_number : queries) {
         student_check.push_back(tests[test_number - 1]);
     }
