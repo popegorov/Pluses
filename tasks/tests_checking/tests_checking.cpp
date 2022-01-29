@@ -7,7 +7,7 @@ std::vector<std::string> StudentsOrder(const std::vector<StudentAction>& student
                                        const std::vector<size_t>& queries) {
     std::deque<std::string> tests;
     for (const auto& student : student_actions) {
-        if (student.side == Side::Bottom){
+        if (student.side == Side::Bottom) {
             tests.push_back(student.name);
         } else {
             tests.push_front(student.name);
