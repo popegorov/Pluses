@@ -29,14 +29,21 @@ bool CompareApplicants(const Applicant& first, const Applicant& second) {
 }
 
 bool CompareStudents(const Student*& first, const Student*& second) {
-    return std::tie(first->name, first->birth_date.year, first->birth_date.month, first->birth_date.day) <
-           std::tie(second->name, second->birth_date.year, second->birth_date.month, second->birth_date.day);
+    if (first->name != second->name) {
+        return first->name < second->name;
+    } else if (first->birth_date.year != second->birth_date.year) {
+        return first->birth_date.year < second->birth_date.year;
+    } else if (first->birth_date.month != second->birth_date.month) {
+        return first->birth_date.month < second->birth_date.month;
+    } else {
+        return first->birth_date.day < second->birth_date.day;
+    }
 }
 
-std::unordered_map<std::string, int> GeneratingUniversityTable(const std::vector<University>& universities) {
+std::unordered_map<std::string, int> GenerateUniversityTable(const std::vector<University>& universities) {
     std::unordered_map<std::string, int> university_table;
-    for (size_t i = 0; i < universities.size(); ++i) {
-        university_table[universities[i].name] = universities[i].max_students;
+    for (const auto& [name, max_students] : universities) {
+        university_table[name] = max_students;
     }
     return university_table;
 }
@@ -45,7 +52,7 @@ AdmissionTable FillUniversities(const std::vector<University>& universities, con
     std::vector<Applicant> sorted_applicants = applicants;
     std::sort(sorted_applicants.begin(), sorted_applicants.end(), CompareApplicants);
     AdmissionTable admission;
-    std::unordered_map<std::string, int> university_table = GeneratingUniversityTable(universities);
+    std::unordered_map<std::string, int> university_table = GenerateUniversityTable(universities);
     for (size_t i = 0; i < applicants.size(); ++i) {
         for (size_t j = 0; j < applicants[i].wish_list.size(); ++j) {
             if (university_table[applicants[i].wish_list[j]] > admission[applicants[i].wish_list[j]].size()) {
