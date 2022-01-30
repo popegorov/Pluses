@@ -1,6 +1,6 @@
 #include "scorer.h"
 
-bool EventCompare (const Event& first, const Event& second) {
+bool EventCompare(const Event& first, const Event& second) {
     return first.time < second.time;
 }
 
