@@ -23,8 +23,8 @@ std::vector<std::string_view> PathModification(std::vector<std::string_view>& cu
     for (const auto& elem : path) {
         if (elem == ".." && !cur_dir.empty()) {
             cur_dir.pop_back();
-        } else if (elem == ".") {
-        } else if (elem != "..") {
+        } else if (elem == "." || elem == "..") {
+        } else {
             cur_dir.emplace_back(elem);
         }
     }
@@ -34,11 +34,13 @@ std::vector<std::string_view> PathModification(std::vector<std::string_view>& cu
 std::string NormalizePath(std::string_view current_working_dir, std::string_view path) {
     std::vector<std::string_view> cur_dir = StringViewSplit(current_working_dir);
     std::vector<std::string_view> cur_path = StringViewSplit(path);
+    if (path[0] == '/') {
+        cur_dir.clear();
+    }
     cur_dir = PathModification(cur_dir, cur_path);
     std::string normal_path;
-    std::string slash = "/";
     for (const auto& elem : cur_dir) {
-        normal_path += slash;
+        normal_path += "/";
         normal_path += elem;
     }
     if (normal_path.empty()) {
