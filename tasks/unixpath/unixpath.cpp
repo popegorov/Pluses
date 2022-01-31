@@ -23,14 +23,14 @@ std::vector<std::string_view> PathModification(std::vector<std::string_view>& cu
     for (const auto& elem : path) {
         if (elem == ".." && !cur_dir.empty()) {
             cur_dir.pop_back();
-        } else if (elem != ".." && elem != "."){
+        } else if (elem != ".." && elem != ".") {
             cur_dir.push_back(elem);
         }
     }
     return cur_dir;
 }
 
-std::string NormalPath (const std::vector<std::string_view>& cur_dir) {
+std::string NormalPath(const std::vector<std::string_view>& cur_dir) {
     std::string normal_path;
     for (const auto& elem : cur_dir) {
         normal_path += "/";
