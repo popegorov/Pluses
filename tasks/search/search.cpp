@@ -85,7 +85,10 @@ std::map<std::pair<std::string_view, size_t>, double> CountTF(
 }
 
 bool ComparePair(const std::pair<double, size_t>& a, const std::pair<double, size_t>& b) {
-    return a.first > b.first;
+    if (a.first != b.first) {
+        return a.first > b.first;
+    }
+    return a.second < b.second;
 }
 
 std::vector<std::pair<double, size_t>> CountTFIDF(std::map<std::pair<std::string_view, size_t>, double>& tf,
@@ -105,10 +108,10 @@ std::vector<std::pair<double, size_t>> CountTFIDF(std::map<std::pair<std::string
 
 std::vector<std::string_view> CutVector(std::vector<std::pair<double, size_t>>& tf_idf, size_t len,
                                         std::vector<std::string_view>& lines) {
-    std::vector<std::string_view> res(len);
+    std::vector<std::string_view> res;
     for (size_t i = 0; i < len; ++i) {
-        if (tf_idf.size() > i && tf_idf[i].second) {
-            res[i] = lines[tf_idf[i].second];
+        if (tf_idf[i].second > 0) {
+            res.push_back(lines[tf_idf[i].second]);
         }
     }
     return res;
