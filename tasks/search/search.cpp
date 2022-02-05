@@ -103,11 +103,13 @@ std::vector<std::pair<double, size_t>> CountTFIDF(std::map<std::pair<std::string
     return tf_idf;
 }
 
-std::vector<std::string_view> CutVector(std::vector<std::pair<double, size_t>>& td_idf, size_t len,
+std::vector<std::string_view> CutVector(std::vector<std::pair<double, size_t>>& tf_idf, size_t len,
                                         std::vector<std::string_view>& lines) {
     std::vector<std::string_view> res(len);
     for (size_t i = 0; i < len; ++i) {
-        res[i] = lines[td_idf[i].second];
+        if (tf_idf.size() > i && tf_idf[i].second) {
+            res[i] = lines[tf_idf[i].second];
+        }
     }
     return res;
 }
