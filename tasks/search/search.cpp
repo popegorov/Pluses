@@ -6,7 +6,7 @@
 #include <unordered_set>
 #include <vector>
 
-std::vector<std::string_view> StringViewSplit(std::string_view& str, const std::string_view& elem = "\n") {
+std::vector<std::string_view> SplitText(std::string_view& str, const std::string_view& elem = "\n") {
     std::vector<std::string_view> result;
     size_t first = 0;
     while (first < str.size()) {
@@ -22,7 +22,7 @@ std::vector<std::string_view> StringViewSplit(std::string_view& str, const std::
     return result;
 }
 
-std::vector<std::string_view> Split(std::string_view text) {
+std::vector<std::string_view> SplitLine(std::string_view text) {
     std::vector<std::string_view> words;
 
     while (!text.empty()) {
@@ -75,25 +75,17 @@ struct Equal {
 
 using HashSet = std::unordered_set<std::string_view, Hash, Equal>;
 
-HashSet FillQuerySet(const std::vector<std::string_view>& queries) {
-    HashSet res;
-    for (const auto& query : queries) {
-        res.insert(query);
-    }
-    return res;
-}
-
 using HashMap = std::unordered_map<std::string_view, size_t, Hash, Equal>;
 
 std::vector<HashMap> FillHashMap(const std::vector<std::string_view>& lines, const HashSet& queries,
                                  std::vector<size_t>& line_sizes) {
     std::vector<HashMap> res(lines.size());
     for (size_t i = 0; i < lines.size(); ++i) {
-        auto words = Split(lines[i]);
+        auto words = SplitLine(lines[i]);
         line_sizes[i] = words.size();
         for (const auto& word : words) {
             if (queries.contains(word)) {
-                res[i][word] += 1;
+                res[i][word]++;
             }
         }
     }
@@ -159,10 +151,10 @@ std::vector<std::string_view> CutVector(std::vector<std::pair<double, size_t>>& 
 }
 
 std::vector<std::string_view> Search(std::string_view text, std::string_view query, size_t results_count) {
-    auto queries = Split(query);
-    auto query_set = FillQuerySet(queries);
+    auto queries = SplitLine(query);
+    HashSet query_set = {queries.begin(), queries.end()};
 
-    auto lines = StringViewSplit(text, "\n");
+    auto lines = SplitText(text, "\n");
     size_t text_size = lines.size();
     std::vector<size_t> line_sizes(text_size);
 
