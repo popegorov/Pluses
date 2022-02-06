@@ -149,7 +149,7 @@ std::vector<std::string_view> CutVector(std::vector<std::pair<double, size_t>>& 
     }
     std::vector<std::string_view> res;
     for (size_t i = 0; i < len; ++i) {
-        if (tf_idf[i].second > 0) {
+        if (tf_idf[i].first > 0) {
             res.push_back(lines[tf_idf[i].second]);
         } else {
             break;
