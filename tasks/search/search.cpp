@@ -1,4 +1,5 @@
 #include "search.h"
+#include <cctype>
 #include <cmath>
 #include <string_view>
 #include <unordered_map>
@@ -46,12 +47,12 @@ struct Hash {
     size_t operator()(const std::string_view& s) const {
         size_t h = 1;
         if (!s.empty()){
-            h = static_cast<size_t>(tolower(s[0]) - 'a' + 1);
+            h = static_cast<size_t>(std::tolower(s[0]) - 'a' + 1);
         }
         size_t h_prev = 0;
         for (size_t i = 0; i < s.size(); ++i) {
             size_t h_new = h;
-            h = ((h_prev * 1009 + static_cast<size_t>(tolower(s[i]) - 'a' + 1)) % static_cast<size_t>(1e9 + 7));
+            h = ((h_prev * 1009 + static_cast<size_t>(std::tolower(s[i]) - 'a' + 1)) % static_cast<size_t>(1e9 + 7));
             h_prev = h_new;
         }
         return h;
@@ -64,7 +65,7 @@ struct Equal {
             return false;
         }
         for (size_t i = 0; i < a.size(); ++i) {
-            if (tolower(a[i]) != tolower(b[i])) {
+            if (std::tolower(a[i]) != std::tolower(b[i])) {
                 return false;
             }
         }
