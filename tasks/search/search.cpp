@@ -46,7 +46,7 @@ std::vector<std::string_view> Split(std::string_view text) {
 struct Hash {
     size_t operator()(const std::string_view& s) const {
         size_t h = 1;
-        if (!s.empty()){
+        if (!s.empty()) {
             h = static_cast<size_t>(std::tolower(s[0]) - 'a' + 1);
         }
         size_t h_prev = 0;
