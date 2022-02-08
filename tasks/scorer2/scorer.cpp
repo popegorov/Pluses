@@ -4,9 +4,9 @@ void Scorer::OnCheckFailed(const StudentName& student_name, const TaskName& task
     current_results_[{student_name, task_name}].first = true;
     if (result_.contains(student_name) && result_[student_name].contains(task_name)) {
         result_[student_name].erase(task_name);
-        if (result_[student_name].empty()) {
-            result_.erase(student_name);
-        }
+    }
+    if (result_[student_name].empty()) {
+        result_.erase(student_name);
     }
 }
 
@@ -15,6 +15,9 @@ void Scorer::OnCheckSuccess(const StudentName& student_name, const TaskName& tas
     if (!current_results_[{student_name, task_name}].second) {
         result_[student_name].insert(task_name);
         current_results_.erase({student_name, task_name});
+    }
+    if (result_[student_name].empty()) {
+        result_.erase(student_name);
     }
 }
 
@@ -33,6 +36,9 @@ void Scorer::OnMergeRequestClosed(const StudentName& student_name, const TaskNam
     if (!current_results_[{student_name, task_name}].first) {
         result_[student_name].insert(task_name);
         current_results_.erase({student_name, task_name});
+    }
+    if (result_[student_name].empty()) {
+        result_.erase(student_name);
     }
 }
 
