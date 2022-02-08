@@ -18,7 +18,7 @@ std::vector<std::string_view> StringViewSplit(std::string_view& str, const std::
     return result;
 }
 
-std::string UnixPath::AbsolutePathToString() const{
+std::string UnixPath::AbsolutePathToString() const {
     std::string result;
     for (const auto& elem : absolute_path_) {
         result += "/";
@@ -85,7 +85,7 @@ void UnixPath::ChangeRelativePath(const std::vector<std::string_view>& path, boo
                 }
             } else if (elem == ".." && !relative_path_.empty() && relative_path_[0] == ".") {
                 relative_path_ = {".."};
-            } else if  (elem == ".." && !relative_path_.empty() && relative_path_[0] == "..") {
+            } else if (elem == ".." && !relative_path_.empty() && relative_path_[0] == "..") {
                 relative_path_.push_back("..");
             } else if (elem != ".." && elem != ".") {
                 relative_path_.push_back(elem);
@@ -106,7 +106,6 @@ void UnixPath::ChangeAbsolutePath(const std::vector<std::string_view>& path, boo
         }
     }
 }
-
 
 UnixPath::UnixPath(std::string_view initial_dir) {
     UnixPath::cur_dir_ = StringViewSplit(initial_dir);

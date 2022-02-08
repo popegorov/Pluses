@@ -12,6 +12,7 @@ class UnixPath {
     void ChangeRelativePath(const std::vector<std::string_view>& path, bool flag);
     std::string AbsolutePathToString() const;
     std::string RelativePathToString() const;
+
 public:
     UnixPath(std::string_view initial_dir);
 
