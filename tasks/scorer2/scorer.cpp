@@ -6,7 +6,6 @@ void Scorer::OnCheckFailed(const StudentName& student_name, const TaskName& task
 
 void Scorer::OnCheckSuccess(const StudentName& student_name, const TaskName& task_name) {
     current_results_[{student_name, task_name}].first = false;
-
 }
 
 void Scorer::OnMergeRequestOpen(const StudentName& student_name, const TaskName& task_name) {
