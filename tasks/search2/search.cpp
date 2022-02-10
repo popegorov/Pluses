@@ -1,6 +1,7 @@
 #include "search.h"
 #include "hashing.h"
 #include "split.h"
+#include <cmath>
 
 std::vector<size_t> CountLineSizes(const std::vector<std::string_view>& lines) {
     std::vector<size_t> line_sizes;
