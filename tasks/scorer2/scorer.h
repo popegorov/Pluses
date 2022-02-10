@@ -19,4 +19,8 @@ public:
     void Reset();
 
     ScoreTable GetScoreTable() const;
+
+private:
+    std::map<StudentName, std::set<TaskName>> checked_;
+    std::map<StudentName, std::set<TaskName>> request_opened_;
 };
