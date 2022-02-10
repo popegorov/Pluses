@@ -21,5 +21,7 @@ public:
     ScoreTable GetScoreTable() const;
 
 private:
-    std::map<std::pair<StudentName, TaskName>, std::pair<bool, bool>> current_results_;
+    std::map<StudentName, std::set<TaskName>> checked_;
+    std::map<StudentName, std::set<TaskName>> request_opened_;
 };
+

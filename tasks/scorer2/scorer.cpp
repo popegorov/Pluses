@@ -1,30 +1,33 @@
 #include "scorer.h"
 
 void Scorer::OnCheckFailed(const StudentName& student_name, const TaskName& task_name) {
-    current_results_[{student_name, task_name}].first = false;
+    checked_[student_name].erase(task_name);
 }
 
 void Scorer::OnCheckSuccess(const StudentName& student_name, const TaskName& task_name) {
-    current_results_[{student_name, task_name}].first = true;
+    checked_[student_name].insert(task_name);
 }
 
 void Scorer::OnMergeRequestOpen(const StudentName& student_name, const TaskName& task_name) {
-    current_results_[{student_name, task_name}].second = true;
+    request_opened_[student_name].insert(task_name);
 }
 
 void Scorer::OnMergeRequestClosed(const StudentName& student_name, const TaskName& task_name) {
-    current_results_[{student_name, task_name}].second = false;
+    request_opened_[student_name].erase(task_name);
 }
 
 void Scorer::Reset() {
-    current_results_.clear();
+    checked_.clear();
+    request_opened_.clear();
 }
 
 ScoreTable Scorer::GetScoreTable() const {
     ScoreTable result;
-    for (const auto& [name_task, check_merge] : current_results_) {
-        if (check_merge.first && !check_merge.second) {
-            result[name_task.first].insert(name_task.second);
+    for (const auto& [student_name, tasks] : checked_) {
+        for (const auto& task : tasks) {
+            if (request_opened_.contains(student_name) && !request_opened_.at(student_name).contains(task)) {
+                result[student_name].insert(task);
+            }
         }
     }
     return result;
