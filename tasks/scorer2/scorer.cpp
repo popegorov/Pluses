@@ -25,7 +25,8 @@ ScoreTable Scorer::GetScoreTable() const {
     ScoreTable result;
     for (const auto& [student_name, tasks] : checked_) {
         for (const auto& task : tasks) {
-            if (!request_opened_.contains(student_name) || (request_opened_.contains(student_name) && !request_opened_.at(student_name).contains(task))) {
+            if (!request_opened_.contains(student_name) ||
+                (request_opened_.contains(student_name) && !request_opened_.at(student_name).contains(task))) {
                 result[student_name].insert(task);
             }
         }
