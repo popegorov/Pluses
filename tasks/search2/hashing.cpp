@@ -1,5 +1,5 @@
 #include "hashing.h"
-#include "split.h"
+#include <cctype>
 
 size_t Hash::operator()(const std::string_view& s) const {
     size_t h = 1;
@@ -25,16 +25,4 @@ bool Equal::operator()(const std::string_view& a, const std::string_view& b) con
         }
     }
     return true;
-}
-
-std::vector<HashMap> FillHashMap(const std::vector<std::string_view>& lines, std::vector<size_t>& line_sizes) {
-    std::vector<HashMap> res(lines.size());
-    for (size_t i = 0; i < lines.size(); ++i) {
-        auto words = SplitLine(lines[i]);
-        line_sizes[i] = words.size();
-        for (const auto& word : words) {
-            res[i][word]++;
-        }
-    }
-    return res;
 }

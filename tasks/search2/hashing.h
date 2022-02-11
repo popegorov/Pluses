@@ -16,5 +16,3 @@ struct Equal {
 using HashSet = std::unordered_set<std::string_view, Hash, Equal>;
 
 using HashMap = std::unordered_map<std::string_view, size_t, Hash, Equal>;
-
-std::vector<HashMap> FillHashMap(const std::vector<std::string_view>& lines, std::vector<size_t>& line_sizes);
