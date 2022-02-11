@@ -1,6 +1,8 @@
 #pragma once
 
 #include "hashing.h"
+#include <string_view>
+#include <vector>
 
 class SearchEngine {
 public:

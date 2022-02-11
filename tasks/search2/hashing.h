@@ -3,7 +3,6 @@
 #include <string_view>
 #include <unordered_map>
 #include <unordered_set>
-#include <vector>
 
 struct Hash {
     size_t operator()(const std::string_view& s) const;
