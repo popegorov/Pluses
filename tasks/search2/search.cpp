@@ -23,9 +23,8 @@ std::vector<size_t> CountLineSizes(const std::vector<std::string_view>& lines) {
     return line_sizes;
 }
 
-std::unordered_map<std::string_view, double> CountIDF(const std::vector<HashMap>& query_count,
-                                                                    const HashSet& queries,
-                                                                    const size_t text_size) {
+std::unordered_map<std::string_view, double> CountIDF(const std::vector<HashMap>& query_count, const HashSet& queries,
+                                                      const size_t text_size) {
     std::unordered_map<std::string_view, double> idf(queries.size());
     for (const auto& query : queries) {
         size_t cur_cnt = 0;
@@ -46,11 +45,10 @@ bool ComparePair(const std::pair<double, size_t>& a, const std::pair<double, siz
     return a.second < b.second;
 }
 
-std::vector<std::pair<double, size_t>> CountTFIDF(const std::vector<HashMap>& query_count,
-                                                                const HashSet& queries,
-                                                                const std::unordered_map<std::string_view, double>& idf,
-                                                                const std::vector<std::string_view>& lines,
-                                                                const std::vector<size_t>& line_sizes) {
+std::vector<std::pair<double, size_t>> CountTFIDF(const std::vector<HashMap>& query_count, const HashSet& queries,
+                                                  const std::unordered_map<std::string_view, double>& idf,
+                                                  const std::vector<std::string_view>& lines,
+                                                  const std::vector<size_t>& line_sizes) {
     std::vector<std::pair<double, size_t>> tf_idf;
     std::unordered_map<size_t, double> tf_idf_map;
     for (size_t i = 0; i < query_count.size(); ++i) {
@@ -67,9 +65,8 @@ std::vector<std::pair<double, size_t>> CountTFIDF(const std::vector<HashMap>& qu
     return tf_idf;
 }
 
-std::vector<std::string_view> CutVector(const std::vector<std::pair<double, size_t>>& tf_idf,
-                                                      const size_t len,
-                                                      const std::vector<std::string_view>& lines) {
+std::vector<std::string_view> CutVector(const std::vector<std::pair<double, size_t>>& tf_idf, const size_t len,
+                                        const std::vector<std::string_view>& lines) {
     size_t min_len = len;
     if (len > tf_idf.size()) {
         min_len = tf_idf.size();
