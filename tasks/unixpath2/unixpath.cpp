@@ -60,7 +60,8 @@ std::vector<std::string_view> ChangeAbsolutePath(const std::vector<std::string_v
     return result;
 }
 
-size_t BuildIndex(const std::vector<std::string_view>& cur_dir, const std::vector<std::string_view>& absolute_path) {
+size_t LastSameSymbol(const std::vector<std::string_view>& cur_dir,
+                      const std::vector<std::string_view>& absolute_path) {
     size_t len = cur_dir.size();
     if (len > absolute_path.size()) {
         len = absolute_path.size();
@@ -77,7 +78,7 @@ size_t BuildIndex(const std::vector<std::string_view>& cur_dir, const std::vecto
 
 void ChangeRelativePath(const std::vector<std::string_view>& absolute_path,
                         const std::vector<std::string_view>& cur_dir, std::vector<std::string_view>& relative_path) {
-    auto max_i = BuildIndex(cur_dir, absolute_path);
+    auto max_i = LastSameSymbol(cur_dir, absolute_path);
     if (max_i == cur_dir.size()) {
         relative_path = {"."};
     } else {
