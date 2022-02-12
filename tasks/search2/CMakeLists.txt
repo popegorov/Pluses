@@ -1,1 +1,1 @@
-add_catch(test_search2 test.cpp search.cpp)
+add_catch(test_search2 test.cpp search.cpp split.cpp hashing.cpp)
