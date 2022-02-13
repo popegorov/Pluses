@@ -55,7 +55,6 @@ void Minesweeper::NewGame(size_t width, size_t height, const std::vector<Cell>& 
     mines_count_ = cells_with_mines.size();
 }
 
-
 std::vector<Minesweeper::Cell> GenerateRandomPlaces(size_t width, size_t height, size_t mines_count) {
     std::vector<size_t> potential_mines(width * height);
     for (size_t i = 0; i < potential_mines.size(); ++i) {
