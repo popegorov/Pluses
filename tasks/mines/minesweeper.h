@@ -32,4 +32,15 @@ public:
     time_t GetGameTime() const;
 
     RenderedField RenderField() const;
+
+private:
+    std::vector<std::string> cur_field_;
+    std::vector<std::string> field_;
+    GameStatus game_status_;
+    time_t time_;
+    size_t mines_count_ = 0;
+    size_t opened_cells_cnt_ = 0;
+
+    void StartGame();
+    void StopGame(bool victory);
 };
