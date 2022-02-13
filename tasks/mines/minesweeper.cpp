@@ -1,67 +1,21 @@
 #include "minesweeper.h"
 #include <algorithm>
-#include <random>
 #include <queue>
+#include <random>
 
 std::vector<std::pair<size_t, size_t>> Neighbours(size_t y, size_t x, size_t max_y, size_t max_x) {
     std::vector<std::pair<size_t, size_t>> neighbours;
-    if (!y && !x) {
-        for (size_t i = 1; i < 4; ++i) {
-            neighbours.push_back({i / 2, i % 2});
-        }
-    } else if (!y && x == max_x - 1) {
-        for (size_t i = 0; i < 4; ++i) {
-            if (i != 1) {
-                neighbours.push_back({i / 2, x + i % 2 - 1});
-            }
-        }
-    } else if (!x && y == max_y - 1) {
-        for (size_t i = 0; i < 4; ++i) {
-            if (i != 2) {
-                neighbours.push_back({y + i / 2 - 1, i % 2});
-            }
-        }
-    } else if (y == max_y - 1 && x == max_x - 1) {
-        for (size_t i = 0; i < 4; ++i) {
-            if (i != 3) {
-                neighbours.push_back({y + i / 2 - 1, x + i % 2 - 1});
-            }
-        }
-    } else if (!y) {
-        for (size_t i = 0; i < 6; ++i) {
-            if (i != 1) {
-                neighbours.push_back({i / 3, x + i % 3 - 1});
-            }
-        }
-    } else if (!x) {
-        for (size_t i = 0; i < 6; ++i) {
-            if (i != 2) {
-                neighbours.push_back({y + i / 2 - 1, i % 2});
-            }
-        }
-    } else if (y == max_y - 1) {
-        for (size_t i = 0; i < 6; ++i) {
-            if (i != 4) {
-                neighbours.push_back({y + i / 3 - 1, x + i % 3 - 1});
-            }
-        }
-    } else if (x == max_x - 1) {
-        for (size_t i = 0; i < 6; ++i) {
-            if (i != 3) {
-                neighbours.push_back({y + i / 2 - 1, x + i % 2 - 1});
-            }
-        }
-    } else {
-        for (size_t i = 0; i < 9; ++i) {
-            if (i != 4) {
-                neighbours.push_back({y + i / 3 - 1, x + i % 3 - 1});
+    for (size_t i = 0; i < 3; ++i) {
+        for (size_t j = 0; j < 3; ++j) {
+            if ((y + i - 1) >= 0 && (y + i - 1) < max_y && (x + j - 1) >= 0 && (x + j - 1) < max_x) {
+                neighbours.push_back({y + i - 1, x + j - 1});
             }
         }
     }
     return neighbours;
 }
 
-size_t CountMinesAround(size_t y, size_t x, const std::vector<std::vector<char>>& field) {
+size_t CountMinesAround(size_t y, size_t x, const std::vector<std::string>& field) {
     size_t mines_cnt = 0;
     auto neighbours = Neighbours(y, x, field.size(), field[0].size());
 
@@ -73,7 +27,7 @@ size_t CountMinesAround(size_t y, size_t x, const std::vector<std::vector<char>>
     return mines_cnt;
 }
 
-void FillField(std::vector<std::vector<char>>& field) {
+void FillField(std::vector<std::string>& field) {
     for (size_t i = 0; i < field.size(); ++i) {
         for (size_t j = 0; j < field[0].size(); ++j) {
             if (field[i][j] != '*') {
@@ -88,35 +42,8 @@ void FillField(std::vector<std::vector<char>>& field) {
     }
 }
 
-void Minesweeper::NewGame(size_t width, size_t height, size_t mines_count) {
-    cur_field_.clear();
-    cur_field_.resize(height);
-    for (auto& row : cur_field_) {
-        row = std::vector<char>(width, '-');
-    }
-    field_ = cur_field_;
-
-    std::vector<size_t> potential_mines(width * height);
-    for (size_t i = 0; i < potential_mines.size(); ++i) {
-        potential_mines[i] = i;
-    }
-    auto rng = std::default_random_engine();
-    std::shuffle(potential_mines.begin(), potential_mines.end(), rng);
-
-    for (size_t i = 0; i < mines_count; ++i) {
-        field_[potential_mines[i] / width][potential_mines[i] % width] = '*';
-    }
-    FillField(field_);
-
-    game_status_ = GameStatus::NOT_STARTED;
-}
-
 void Minesweeper::NewGame(size_t width, size_t height, const std::vector<Cell>& cells_with_mines) {
-    cur_field_.clear();
-    cur_field_.resize(height);
-    for (auto& row : cur_field_) {
-        row = std::vector<char>(width, '-');
-    }
+    cur_field_.assign(height, std::string(width, '-'));
     field_ = cur_field_;
 
     for (auto cur_cell : cells_with_mines) {
@@ -125,20 +52,39 @@ void Minesweeper::NewGame(size_t width, size_t height, const std::vector<Cell>& 
     FillField(field_);
 
     game_status_ = GameStatus::NOT_STARTED;
+    mines_count_ = cells_with_mines.size();
+}
+
+
+std::vector<Minesweeper::Cell> GenerateRandomPlaces(size_t width, size_t height, size_t mines_count) {
+    std::vector<size_t> potential_mines(width * height);
+    for (size_t i = 0; i < potential_mines.size(); ++i) {
+        potential_mines[i] = i;
+    }
+    auto rng = std::default_random_engine();
+    std::shuffle(potential_mines.begin(), potential_mines.end(), rng);
+
+    std::vector<Minesweeper::Cell> result;
+    for (size_t i = 0; i < mines_count; ++i) {
+        result.push_back({potential_mines[i] % width, potential_mines[i] / width});
+    }
+    return result;
+}
+
+void Minesweeper::NewGame(size_t width, size_t height, size_t mines_count) {
+    NewGame(width, height, GenerateRandomPlaces(width, height, mines_count));
 }
 
 Minesweeper::Minesweeper(size_t width, size_t height, size_t mines_count) {
     Minesweeper::NewGame(width, height, mines_count);
-    mines_count_ = mines_count;
 }
 
 Minesweeper::Minesweeper(size_t width, size_t height, const std::vector<Cell>& cells_with_mines) {
     Minesweeper::NewGame(width, height, cells_with_mines);
-    mines_count_ = cells_with_mines.size();
 }
 
-Minesweeper::GameStatus OpenThisCell(size_t y, size_t x, std::vector<std::vector<char>>& cur_field,
-                                     std::vector<std::vector<char>>& field, size_t& opened_cells) {
+Minesweeper::GameStatus OpenThisCell(size_t y, size_t x, std::vector<std::string>& cur_field,
+                                     std::vector<std::string>& field, size_t& opened_cells) {
     if (field[y][x] == '*') {
         return Minesweeper::GameStatus::DEFEAT;
     }
@@ -153,6 +99,7 @@ Minesweeper::GameStatus OpenThisCell(size_t y, size_t x, std::vector<std::vector
             opened_cells++;
         }
         cur_field[cur_cell.first][cur_cell.second] = field[cur_cell.first][cur_cell.second];
+
         if (cur_field[cur_cell.first][cur_cell.second] == '.') {
             auto neighbours = Neighbours(cur_cell.first, cur_cell.second, field.size(), field[0].size());
             for (const auto& elem : neighbours) {
@@ -197,7 +144,7 @@ Minesweeper::GameStatus Minesweeper::GetGameStatus() const {
 }
 
 time_t Minesweeper::GetGameTime() const {
-    if (!time_) {
+    if (game_status_ == GameStatus::NOT_STARTED) {
         return 0;
     } else {
         return (time(nullptr) - time_);
