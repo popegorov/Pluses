@@ -167,7 +167,7 @@ Minesweeper::GameStatus OpenThisCell(size_t y, size_t x, std::vector<std::vector
 
 void Minesweeper::OpenCell(const Cell& cell) {
     if (game_status_ == GameStatus::NOT_STARTED) {
-        time_ = std::time(nullptr);
+        time_ = time(nullptr);
     }
     if (game_status_ != GameStatus::DEFEAT && game_status_ != GameStatus::VICTORY) {
         if (cur_field_[cell.y][cell.x] == '-') {
@@ -197,10 +197,10 @@ Minesweeper::GameStatus Minesweeper::GetGameStatus() const {
 }
 
 time_t Minesweeper::GetGameTime() const {
-    if (time_ == 0) {
+    if (!time_) {
         return 0;
     } else {
-        return (std::time(nullptr) - time_);
+        return (time(nullptr) - time_);
     }
 }
 
