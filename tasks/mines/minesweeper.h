@@ -41,6 +41,6 @@ private:
     size_t mines_count_ = 0;
     size_t opened_cells_cnt_ = 0;
 
-    void StartGame ();
-    void StopGame (bool victory);
+    void StartGame();
+    void StopGame(bool victory);
 };
