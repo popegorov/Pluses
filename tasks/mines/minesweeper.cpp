@@ -7,7 +7,7 @@ std::vector<std::pair<size_t, size_t>> Neighbours(size_t y, size_t x, size_t max
     std::vector<std::pair<size_t, size_t>> neighbours;
     for (size_t i = 0; i < 3; ++i) {
         for (size_t j = 0; j < 3; ++j) {
-            if ((y + i - 1) >= 0 && (y + i - 1) < max_y && (x + j - 1) >= 0 && (x + j - 1) < max_x) {
+            if ((y + i) > 0 && (y + i - 1) < max_y && (x + j) > 0 && (x + j - 1) < max_x) {
                 neighbours.push_back({y + i - 1, x + j - 1});
             }
         }
@@ -17,9 +17,8 @@ std::vector<std::pair<size_t, size_t>> Neighbours(size_t y, size_t x, size_t max
 
 size_t CountMinesAround(size_t y, size_t x, const std::vector<std::string>& field) {
     size_t mines_cnt = 0;
-    auto neighbours = Neighbours(y, x, field.size(), field[0].size());
 
-    for (const auto& elem : neighbours) {
+    for (const auto& elem : Neighbours(y, x, field.size(), field[0].size())) {
         if (field[elem.first][elem.second] == '*') {
             mines_cnt++;
         }
@@ -33,7 +32,7 @@ void FillField(std::vector<std::string>& field) {
             if (field[i][j] != '*') {
                 auto mines_cnt = CountMinesAround(i, j, field);
                 if (mines_cnt) {
-                    field[i][j] = static_cast<char>(mines_cnt + 48);
+                    field[i][j] = static_cast<char>(mines_cnt + '0');
                 } else {
                     field[i][j] = '.';
                 }
@@ -75,11 +74,11 @@ void Minesweeper::NewGame(size_t width, size_t height, size_t mines_count) {
 }
 
 Minesweeper::Minesweeper(size_t width, size_t height, size_t mines_count) {
-    Minesweeper::NewGame(width, height, mines_count);
+    NewGame(width, height, mines_count);
 }
 
 Minesweeper::Minesweeper(size_t width, size_t height, const std::vector<Cell>& cells_with_mines) {
-    Minesweeper::NewGame(width, height, cells_with_mines);
+    NewGame(width, height, cells_with_mines);
 }
 
 Minesweeper::GameStatus OpenThisCell(size_t y, size_t x, std::vector<std::string>& cur_field,
@@ -111,20 +110,34 @@ Minesweeper::GameStatus OpenThisCell(size_t y, size_t x, std::vector<std::string
     return Minesweeper::GameStatus::IN_PROGRESS;
 }
 
+void Minesweeper::StartGame() {
+    game_status_ = GameStatus::IN_PROGRESS;
+    time_ = time(nullptr);
+}
+
+void Minesweeper::StopGame(bool victory) {
+    if (victory) {
+        game_status_ = GameStatus::VICTORY;
+    } else {
+        cur_field_ = field_;
+    }
+    time_ = time(nullptr) - time_;
+}
+
 void Minesweeper::OpenCell(const Cell& cell) {
     if (game_status_ == GameStatus::NOT_STARTED) {
-        time_ = time(nullptr);
+        StartGame();
     }
     if (game_status_ != GameStatus::DEFEAT && game_status_ != GameStatus::VICTORY) {
         if (cur_field_[cell.y][cell.x] == '-') {
             game_status_ = OpenThisCell(cell.y, cell.x, cur_field_, field_, opened_cells_cnt_);
         }
         if (game_status_ == GameStatus::DEFEAT) {
-            cur_field_ = field_;
+            StopGame(false);
         }
     }
     if (mines_count_ + opened_cells_cnt_ == cur_field_.size() * cur_field_[0].size()) {
-        game_status_ = GameStatus::VICTORY;
+        StopGame(true);
     }
 }
 
@@ -145,17 +158,13 @@ Minesweeper::GameStatus Minesweeper::GetGameStatus() const {
 time_t Minesweeper::GetGameTime() const {
     if (game_status_ == GameStatus::NOT_STARTED) {
         return 0;
+    } else if (game_status_ == GameStatus::DEFEAT) {
+        return time_;
     } else {
         return (time(nullptr) - time_);
     }
 }
 
 Minesweeper::RenderedField Minesweeper::RenderField() const {
-    Minesweeper::RenderedField result(cur_field_.size());
-    for (size_t i = 0; i < cur_field_.size(); ++i) {
-        for (const auto& elem : cur_field_[i]) {
-            result[i] += elem;
-        }
-    }
-    return result;
+    return cur_field_;
 }
