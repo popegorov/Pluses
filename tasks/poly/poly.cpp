@@ -24,7 +24,7 @@ Poly::Poly(const std::vector<std::pair<size_t, int>>& coefficients) {
 }
 
 Poly::Poly(const Poly& other) {
-    NewPoly({other.coefficients_.begin(), other.coefficients_.end()});
+    coefficients_ = other.coefficients_;
 }
 
 Poly& Poly::operator=(const Poly& other) {
@@ -41,7 +41,8 @@ int64_t Pow(int x, size_t deg) {
     } else if (deg % 2 == 1) {
         return x * Pow(x, deg - 1);
     } else {
-        return Pow(x, deg / 2) * Pow(x, deg / 2);
+        int64_t sqrt = Pow(x, deg / 2);
+        return sqrt * sqrt;
     }
 }
 
@@ -106,6 +107,9 @@ Poly Poly::operator*(const Poly& other) const {
     for (const auto& [deg1, coef1] : coefficients_) {
         for (const auto& [deg2, coef2] : other.coefficients_) {
             result.coefficients_[deg1 + deg2] += coef1 * coef2;
+            if (!result.coefficients_[deg1 + deg2]) {
+                result.coefficients_.erase(deg1 + deg2);
+            }
         }
     }
 
