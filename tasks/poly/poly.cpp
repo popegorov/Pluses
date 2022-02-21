@@ -35,13 +35,13 @@ Poly& Poly::operator=(const Poly& other) {
     return *this;
 }
 
-int64_t pow(int x, size_t deg) {
+int64_t Pow(int x, size_t deg) {
     if (!deg) {
         return 1;
     } else if (deg % 2 == 1) {
-        return x * pow(x, deg - 1);
+        return x * Pow(x, deg - 1);
     } else {
-        return pow(x, deg / 2) * pow(x, deg / 2);
+        return Pow(x, deg / 2) * Pow(x, deg / 2);
     }
 }
 
@@ -49,7 +49,7 @@ int64_t Poly::operator()(int x) const {
     int64_t res = 0;
 
     for (const auto& [deg, coef] : coefficients_) {
-        res += static_cast<int64_t>(coef) * pow(x, deg);
+        res += static_cast<int64_t>(coef) * Pow(x, deg);
     }
 
     return res;
