@@ -1,7 +1,7 @@
 #pragma once
 
-#include <ostream>
 #include <map>
+#include <ostream>
 #include <vector>
 
 class Poly {
@@ -30,5 +30,5 @@ public:
 
 private:
     std::map<size_t, int> coefficients_;
-    void NewPoly(std::vector<std::pair<size_t, int>>& coef);
+    void NewPoly(const std::vector<std::pair<size_t, int>>& coef);
 };

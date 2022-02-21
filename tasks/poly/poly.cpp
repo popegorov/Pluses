@@ -1,9 +1,6 @@
 #include "poly.h"
 
-#include <cmath>
-#include <string>
-
-void Poly::NewPoly(std::vector<std::pair<size_t, int>>& coef) {
+void Poly::NewPoly(const std::vector<std::pair<size_t, int>>& coef) {
     for (const auto& elem : coef) {
         if (elem.second != 0) {
             coefficients_[elem.first] = elem.second;
@@ -12,8 +9,6 @@ void Poly::NewPoly(std::vector<std::pair<size_t, int>>& coef) {
 }
 
 Poly::Poly() {
-    std::vector<std::pair<size_t, int>> coef;
-    NewPoly(coef);
 }
 
 Poly::Poly(const std::vector<int>& coefficients) {
@@ -25,16 +20,11 @@ Poly::Poly(const std::vector<int>& coefficients) {
 }
 
 Poly::Poly(const std::vector<std::pair<size_t, int>>& coefficients) {
-    auto coef_copy = coefficients;
-    NewPoly(coef_copy);
+    NewPoly(coefficients);
 }
 
 Poly::Poly(const Poly& other) {
-    std::vector<std::pair<size_t, int>> coef;
-    for (const auto& elem : other.coefficients_) {
-        coef.push_back(elem);
-    }
-    NewPoly(coef);
+    NewPoly({other.coefficients_.begin(), other.coefficients_.end()});
 }
 
 Poly& Poly::operator=(const Poly& other) {
@@ -45,11 +35,21 @@ Poly& Poly::operator=(const Poly& other) {
     return *this;
 }
 
+int64_t pow(int x, size_t deg) {
+    if (!deg) {
+        return 1;
+    } else if (deg % 2 == 1) {
+        return x * pow(x, deg - 1);
+    } else {
+        return pow(x, deg / 2) * pow(x, deg / 2);
+    }
+}
+
 int64_t Poly::operator()(int x) const {
     int64_t res = 0;
 
     for (const auto& [deg, coef] : coefficients_) {
-        res += static_cast<int64_t>(coef) * static_cast<int64_t>(pow(x, deg));
+        res += static_cast<int64_t>(coef) * pow(x, deg);
     }
 
     return res;
