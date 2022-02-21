@@ -28,7 +28,7 @@ Zipped::Iter Zipped::Iter::operator++() {
 }
 
 bool Zipped::Iter::operator!=(const Iter& other) {
-    return !(ptr_.first == other.ptr_.first || ptr_.second == other.ptr_.second);
+    return ptr_.first != other.ptr_.first && ptr_.second != other.ptr_.second;
 }
 
 ZippedPair Zipped::Iter::operator*() const {
