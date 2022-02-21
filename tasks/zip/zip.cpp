@@ -1,9 +1,7 @@
 #include "zip.h"
 
 Zipped Zip(Iterator a_begin, Iterator a_end, Iterator b_begin, Iterator b_end) {
-    auto zipped = Zipped(a_begin, a_end, b_begin, b_end);
-
-    return zipped;
+    return Zipped(a_begin, a_end, b_begin, b_end);
 }
 
 Zipped::Zipped(Iterator first_begin, Iterator first_end, Iterator second_begin, Iterator second_end) {
@@ -22,13 +20,7 @@ Zipped::Iter Zipped::begin() const {
 }
 
 Zipped::Iter Zipped::end() const {
-    auto cur_first = first_begin_;
-    auto cur_second = second_begin_;
-    while (cur_first != first_end_ && cur_second != second_end_) {
-        cur_first++;
-        cur_second++;
-    }
-    return (Iter(cur_first, cur_second));
+    return (Iter(first_end_, second_end_));
 }
 
 Zipped::Iter Zipped::Iter::operator++() {
@@ -36,7 +28,7 @@ Zipped::Iter Zipped::Iter::operator++() {
 }
 
 bool Zipped::Iter::operator!=(const Iter& other) {
-    return (ptr_.first != other.ptr_.first || ptr_.second != other.ptr_.second);
+    return !(ptr_.first == other.ptr_.first || ptr_.second == other.ptr_.second);
 }
 
 ZippedPair Zipped::Iter::operator*() const {
