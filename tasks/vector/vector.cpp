@@ -23,11 +23,7 @@ Vector::Vector(std::initializer_list<ValueType> list) {
     size_ = capacity_;
     ptr_ = new ValueType[capacity_];
 
-    SizeType i = 0;
-    for (const auto& elem : list) {
-        ptr_[i] = elem;
-        ++i;
-    }
+    std::copy(list.begin(), list.end(), ptr_);
 }
 
 Vector::Vector(const Vector& other) {
@@ -35,9 +31,7 @@ Vector::Vector(const Vector& other) {
     size_ = capacity_;
     ptr_ = new ValueType[capacity_];
 
-    for (SizeType i = 0; i < size_; ++i) {
-        ptr_[i] = other.ptr_[i];
-    }
+    std::copy(other.ptr_, other.ptr_ + size_, ptr_);
 }
 
 Vector::~Vector() {
@@ -78,10 +72,7 @@ bool Vector::operator!=(const Vector& other) const {
 }
 
 std::strong_ordering Vector::operator<=>(const Vector& other) const {
-    SizeType min_size = size_;
-    if (min_size > other.size_) {
-        min_size = other.size_;
-    }
+    const auto min_size = std::min(size_, other.size_);
 
     for (SizeType i = 0; i < min_size; ++i) {
         if (ptr_[i] != other.ptr_[i]) {
@@ -115,9 +106,7 @@ Vector::SizeType Vector::Capacity() const {
 void Vector::Reserve(Vector::SizeType new_capacity) {
     if (new_capacity > capacity_) {
         ValueType* new_ptr = new ValueType[new_capacity];
-        for (size_t i = 0; i < size_; ++i) {
-            new_ptr[i] = ptr_[i];
-        }
+        std::copy(ptr_, ptr_ + size_, new_ptr);
         delete[] ptr_;
 
         ptr_ = new_ptr;
@@ -197,7 +186,7 @@ Vector::Iterator& Vector::Iterator::operator++() {
 
 Vector::Iterator Vector::Iterator::operator++(int) {
     auto copy = *this;
-    pointer_++;
+    ++pointer_;
     return copy;
 }
 
@@ -208,7 +197,7 @@ Vector::Iterator& Vector::Iterator::operator--() {
 
 Vector::Iterator Vector::Iterator::operator--(int) {
     auto copy = *this;
-    pointer_--;
+    --pointer_;
     return copy;
 }
 
