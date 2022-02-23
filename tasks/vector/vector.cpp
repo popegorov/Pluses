@@ -1,5 +1,7 @@
 #include "vector.h"
 
+#include <algorithm>
+
 Vector::Vector() {
     capacity_ = 0;
     size_ = capacity_;
