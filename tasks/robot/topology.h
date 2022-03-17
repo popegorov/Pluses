@@ -8,8 +8,11 @@ class Topology {
 public:
     using Distance = ssize_t;
 
-    std::vector<Point> GetNeighbours(const Point& point) const;
+    virtual std::vector<Point> GetNeighbours(const Point& point) const;
     Distance MeasureDistance(const Point& from, const Point& to) const;
 
     static const Distance UNREACHABLE = -1;
+
+protected:
+    std::vector<std::vector<bool>> field_;
 };
