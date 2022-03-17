@@ -22,8 +22,10 @@ public:
             return ptr_first_ != other.ptr_first_ && ptr_second_ != other.ptr_second_;
         }
 
-        Iter operator++() {
-            return Iter(ptr_first_++, ptr_second_++);
+        Iter& operator++() {
+            ++ptr_first_;
+            ++ptr_second_;
+            return *this;
         }
 
         auto operator*() const {
