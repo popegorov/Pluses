@@ -3,6 +3,8 @@
 
 const size_t INF = 1e9;
 
+const Topology::Distance Topology::UNREACHABLE = -1;
+
 std::vector<Point> Topology::GetNeighbours(const Point& point) const {
     return std::vector<Point>();
 }

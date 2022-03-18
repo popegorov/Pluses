@@ -11,7 +11,7 @@ public:
     virtual std::vector<Point> GetNeighbours(const Point& point) const;
     Distance MeasureDistance(const Point& from, const Point& to) const;
 
-    static const Distance UNREACHABLE = -1;
+    static const Distance UNREACHABLE;
 
 protected:
     std::vector<std::vector<bool>> field_;
