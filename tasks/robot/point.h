@@ -10,9 +10,9 @@ struct Point {
     bool operator==(const Point& other) const;
 };
 
-template<>
+template <>
 struct std::hash<Point> {
-    size_t operator()(const Point& a) const  {
+    size_t operator()(const Point& a) const {
         return a.x * 809 + a.y * 907;
     }
 };
