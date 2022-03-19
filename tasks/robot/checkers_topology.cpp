@@ -8,10 +8,11 @@ CheckersTopology::CheckersTopology(const std::vector<std::vector<bool>>& field) 
 std::vector<Point> CheckersTopology::GetNeighbours(const Point& point) const {
     std::vector<Point> res;
 
-    for (const auto& cur_shift : shift_) {
-        if ((point.x + cur_shift.first) < field_[0].size() && (point.y + cur_shift.second) < field_.size() &&
-            !field_[point.y + cur_shift.second][point.x + cur_shift.first]) {
-            res.push_back({point.x + cur_shift.first, point.y + cur_shift.second});
+    for (const auto& [delta_x, delta_y] : shift_) {
+        auto new_x = point.x + delta_x;
+        auto new_y = point.y + delta_y;
+        if (new_x < field_[0].size() && new_y < field_.size() && !field_[new_y][new_x]) {
+            res.push_back({new_x, new_y});
         }
     }
 
@@ -23,16 +24,18 @@ std::vector<Point> CheckersTopology::GetNeighbours(const Point& point) const {
     while (!q.empty()) {
         auto cur_point = q.front();
         q.pop();
-        for (const auto& cur_shift : shift_) {
-            if ((cur_point.x + 2 * cur_shift.first) < field_[0].size() &&
-                (cur_point.y + 2 * cur_shift.second) < field_.size() &&
-                field_[cur_point.y + cur_shift.second][cur_point.x + cur_shift.first] &&
-                !field_[cur_point.y + 2 * cur_shift.second][cur_point.x + 2 * cur_shift.first] &&
-                !visited[cur_point.y + 2 * cur_shift.second][cur_point.x + 2 * cur_shift.first]) {
+        for (const auto& [delta_x, delta_y] : shift_) {
+            auto new_x = cur_point.x + delta_x;
+            auto new_y = cur_point.y + delta_y;
+            auto after_new_x = cur_point.x + 2 * delta_x;
+            auto after_new_y = cur_point.y + 2 * delta_y;
 
-                q.push({cur_point.x + 2 * cur_shift.first, cur_point.y + 2 * cur_shift.second});
-                visited[cur_point.y + 2 * cur_shift.second][cur_point.x + 2 * cur_shift.first] = true;
-                res.push_back({cur_point.x + 2 * cur_shift.first, cur_point.y + 2 * cur_shift.second});
+            if (after_new_x < field_[0].size() && after_new_y < field_.size() && field_[new_y][new_x] &&
+                !field_[after_new_y][after_new_x] && !visited[after_new_y][after_new_x]) {
+
+                q.push({after_new_x, after_new_y});
+                visited[after_new_y][after_new_x] = true;
+                res.push_back({after_new_x, after_new_y});
             }
         }
     }

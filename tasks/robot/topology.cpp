@@ -1,8 +1,6 @@
 #include "topology.h"
 #include <queue>
 
-const size_t INF = 1e9;
-
 const Topology::Distance Topology::UNREACHABLE = -1;
 
 std::vector<Point> Topology::GetNeighbours(const Point& point) const {
@@ -13,7 +11,7 @@ Topology::Distance Topology::MeasureDistance(const Point& from, const Point& to)
     auto height = field_.size();
     auto width = field_[0].size();
 
-    std::vector<std::vector<size_t>> dist(height, std::vector<size_t>(width, INF));
+    std::vector<std::vector<size_t>> dist(height, std::vector<size_t>(width, Topology::UNREACHABLE));
     std::queue<Point> q;
 
     dist[from.y][from.x] = 0;
@@ -24,14 +22,11 @@ Topology::Distance Topology::MeasureDistance(const Point& from, const Point& to)
         q.pop();
 
         for (const auto& [x, y] : GetNeighbours(cur_point)) {
-            if (y < height && x < width && !field_[y][x] && dist[y][x] == INF) {
+            if (y < height && x < width && !field_[y][x] && dist[y][x] == Topology::UNREACHABLE) {
                 dist[y][x] = dist[cur_point.y][cur_point.x] + 1;
                 q.push({x, y});
             }
         }
     }
-    if (dist[to.y][to.x] != INF) {
-        return dist[to.y][to.x];
-    }
-    return UNREACHABLE;
+    return dist[to.y][to.x];
 }

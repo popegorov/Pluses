@@ -4,7 +4,6 @@
 #include "topology.h"
 
 #include <exception>
-#include <memory>
 #include <unordered_map>
 
 class World {
