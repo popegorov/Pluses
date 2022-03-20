@@ -1,38 +1,20 @@
 #pragma once
 
-#include <fstream>
-#include <vector>
+#include "image.h"
+#include "filters/crop.h"
+#include "filters/grayscale.h"
+#include "filters/negative.h"
 
-struct Color {
-    double red;
-    double green;
-    double blue;
-};
-
-class Image {
+class ImageProcessor {
 public:
-    size_t GetHeight() const;
-
-    size_t GetWidth() const;
-
-    size_t GetPadding() const;
-
-    std::vector<std::vector<Color>> &GetPicture();
-
-    void SetHeight(size_t new_height);
-
-    void SetWidth(size_t new_width);
-
-    void SetPadding(size_t new_width);
-
-    void Load(std::ifstream &in);
-
-    void Save(std::ofstream &out);
-
+    void Load(std::ifstream& in);
+    void Save(std::ofstream& out);
+    void FilterCrop(size_t width, size_t height);
+    void FilterGs();
+    void FilterNeg();
 private:
-    size_t height_;
-    size_t width_;
-    size_t padding_;
-    std::vector<std::vector<Color>> picture_;
-    size_t size_of_the_raw_bitmap_data_;
+    Image im_;
 };
+
+
+
