@@ -6,24 +6,20 @@
 
 class Image {
 public:
+    using Picture = std::vector<std::vector<Color>>;
+
     size_t GetHeight() const;
 
     size_t GetWidth() const;
 
-    size_t GetPadding() const;
+    Picture &GetPicture();
 
-    std::vector<std::vector<Color>> &GetPicture();
-
-    void SetHeight(size_t new_height);
-
-    void SetWidth(size_t new_width);
+    Color *GetPixel(size_t x, size_t y);
 
     void Load(std::ifstream &in);
 
     void Save(std::ofstream &out);
 
 private:
-    size_t height_;
-    size_t width_;
-    std::vector<std::vector<Color>> picture_;
+    Picture picture_;
 };

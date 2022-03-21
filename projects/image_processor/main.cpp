@@ -1,53 +1,58 @@
-#include "image_processor.h"
-#include <iostream>
+#include "image.h"
+#include "filters/blur.h"
+#include "filters/crop.h"
+#include "filters/edge_detection.h"
+#include "filters/grayscale.h"
+#include "filters/negative.h"
+#include "filters/sharpening.h"
 
-int main() {
-    ImageProcessor im;
-    std::cout << "Введите адрес исходного изображения:" << std::endl;
-
-    std::string in;
-    std::cin >> in;
-    std::ifstream input("example.bmp", std::ios::binary);
-    //    while (!input) {
-    //        std::cout << "Адрес не валиден. Попробуйте ещё раз:" << std::endl;
-    //        std::cin >> in;
-    //        std::ifstream input(in, std::ios::binary);
-    //    } TODO
-
+int main(int argc, char **argv) {
+    Image im;
+    std::ifstream input(argv[1], std::ios::binary);
     im.Load(input);
+    std::ofstream output(argv[2], std::ios::binary);
+    std::vector<Filter *> filters_to_do;
 
-    std::cout << "Выберете методы, которые хотите вызвать и напишите их названия:"
-                 "\ncrop\nnegative\ngs\n\nЕсли хотите закончить, напишите save"
-              << std::endl
-              << std::endl;
+    for (int i = 3; i < argc; ++i) {
+        if (static_cast<std::string>(argv[i]) == "-blur") {
 
-    std::string cur_method;
-    std::cin >> cur_method;
+            auto sigma = std::atoi(argv[++i]);
+            auto blur = new Blur(sigma);
+            filters_to_do.push_back(blur);
 
-    while (cur_method != "save") {
-        if (cur_method == "crop") {
-            size_t width, height;
-            std::cout << "Задайте новую ширину картинки:" << std::endl;
-            std::cin >> width;
-            std::cout << "Задайте новую высоту картинки:" << std::endl;
-            std::cin >> height;
-            im.FilterCrop(width, height);
-            std::cout << std::endl;
-        } else if (cur_method == "neg") {
-            im.FilterNeg();
-        } else if (cur_method == "gs") {
-            im.FilterGs();
-        } else {
-            std::string _;
-            std::getline(std::cin, _);
-            std::cout << "Такого метода нет. Попробуйте ещё раз:" << std::endl;
+        } else if (static_cast<std::string>(argv[i]) == "-crop") {
+
+            auto width = std::atoi(argv[++i]);
+            auto height = std::atoi(argv[++i]);
+            auto crop = new Crop(width, height);
+            filters_to_do.push_back(crop);
+
+        } else if (static_cast<std::string>(argv[i]) == "edge") {
+
+            auto threshold = std::atoi(argv[++i]);
+            auto edge_detection = new EdgeDetection(threshold);
+            filters_to_do.push_back(edge_detection);
+
+        } else if (static_cast<std::string>(argv[i]) == "-gs") {
+
+            auto grayscale = new GrayScale();
+            filters_to_do.push_back(grayscale);
+
+        } else if (static_cast<std::string>(argv[i]) == "-neg") {
+
+            auto negative = new Negative();
+            filters_to_do.push_back(negative);
+
+        } else if (static_cast<std::string>(argv[i]) == "-sharp") {
+
+            auto sharpening = new Sharpening();
+            filters_to_do.push_back(sharpening);
+
         }
-        std::cin >> cur_method;
+    }
+    for (const auto &filter: filters_to_do) {
+        filter->Modify(im);
     }
 
-    std::cout << "Введите адрес, по которому хотите сохранить изображение" << std::endl;
-    std::string out;
-    std::cin >> out;
-    std::ofstream output("output2.bmp", std::ios::binary);
     im.Save(output);
 }

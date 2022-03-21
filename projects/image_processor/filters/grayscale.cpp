@@ -1,11 +1,14 @@
 #include "grayscale.h"
 
-void Gs::Modify(Image& im) {
-    for (auto& row : im.GetPicture()) {
-        for (auto& pixel : row) {
-            pixel.blue = 0.299 * pixel.red + 0.587 * pixel.green + 0.114 * pixel.blue;
-            pixel.green = 0.299 * pixel.red + 0.587 * pixel.green + 0.114 * pixel.blue;
-            pixel.red = 0.299 * pixel.red + 0.587 * pixel.green + 0.114 * pixel.blue;
+void GrayScale::Modify(Image &im) {
+    for (size_t y = 0; y < im.GetHeight(); ++y) {
+        for (size_t x = 0; x < im.GetWidth(); ++x) {
+            auto cur_pixel = im.GetPixel(x, y);
+            auto gray_pixel = cur_pixel->blue * 0.114 + cur_pixel->green * 0.587 + cur_pixel->blue * 0.299;
+
+            cur_pixel->blue = gray_pixel;
+            cur_pixel->green = gray_pixel;
+            cur_pixel->red = gray_pixel;
         }
     }
 }

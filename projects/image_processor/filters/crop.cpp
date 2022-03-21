@@ -12,20 +12,16 @@ void Crop::Modify(Image &im) {
         for (auto &cur_row: im.GetPicture()) {
             cur_row.resize(new_width_);
         }
-        im.SetHeight(new_height_);
-        im.SetWidth(new_width_);
 
     } else if (new_height_ < im.GetHeight()) {
 
         im.GetPicture().resize(new_height_);
-        im.SetHeight(new_height_);
 
     } else if (new_width_ < im.GetWidth()) {
 
         for (auto &cur_row: im.GetPicture()) {
             cur_row.resize(new_width_);
         }
-        im.SetWidth(new_width_);
 
     }
 }

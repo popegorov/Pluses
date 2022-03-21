@@ -2,7 +2,7 @@
 
 #include "base_filter.h"
 
-class Neg : Filter {
+class Negative : public Filter {
 public:
-    void Modify(Image& im) override;
+    void Modify(Image &im) override;
 };

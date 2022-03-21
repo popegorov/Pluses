@@ -4,6 +4,6 @@
 
 class Filter {
 public:
-    virtual void Modify(Image &im);
-    virtual ~Filter();
+    virtual void Modify(Image &im) = 0;
+    virtual ~Filter() = default;
 };

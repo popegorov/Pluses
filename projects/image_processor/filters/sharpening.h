@@ -2,7 +2,7 @@
 
 #include "base_filter.h"
 
-class GrayScale : public Filter {
+class Sharpening : public Filter {
 public:
     void Modify(Image &im) override;
 };

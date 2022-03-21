@@ -5,7 +5,7 @@
 class Crop : public Filter {
 public:
     Crop(size_t width, size_t height);
-    
+
     void Modify(Image &im) override;
 
 private:
