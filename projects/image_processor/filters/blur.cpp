@@ -12,7 +12,7 @@ namespace {
 double DoGaussFunction(double val, double sigma, size_t c0, size_t c) {
     double abs_c = abs(static_cast<int>(c0) - static_cast<int>(c));
     double sigma_sq = 2 * sigma * sigma;
-    return val / std::sqrt(pi * sigma_sq) * exp(-1 * abs_c * abs_c) / sigma_sq;
+    return val / std::sqrt(pi * sigma_sq) * exp(-1 * abs_c * abs_c / sigma_sq);
 }
 
 void ChangeColorByColumns(Image &im, const Image::Picture &picture_copy, size_t x0, size_t y0, double sigma) {

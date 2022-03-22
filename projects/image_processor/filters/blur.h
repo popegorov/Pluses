@@ -1,8 +1,13 @@
-//
-// Created by Тима Торбахов on 22.03.2022.
-//
+#pragma once
 
-#ifndef CPP_PILOT_HSE_BLUR_H
-#define CPP_PILOT_HSE_BLUR_H
+#include "base_filter.h"
 
-#endif  // CPP_PILOT_HSE_BLUR_H
+class Blur : public Filter {
+public:
+    Blur(double sigma);
+
+    void Modify(Image &im) override;
+
+private:
+    double sigma_;
+};

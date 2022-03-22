@@ -52,6 +52,7 @@ int main(int argc, char **argv) {
     }
     for (const auto &filter: filters_to_do) {
         filter->Modify(im);
+        delete filter;
     }
 
     im.Save(output);
