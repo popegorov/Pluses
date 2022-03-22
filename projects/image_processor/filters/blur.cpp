@@ -5,7 +5,7 @@
 #include <numbers>
 
 
-const double pi = std::numbers::pi_v<double>;
+double pi = std::numbers::pi_v<double>;
 
 namespace {
 
