@@ -14,7 +14,7 @@ public:
 
     Picture &GetPicture();
 
-    Color *GetPixel(size_t x, size_t y);
+    Color& GetPixel(size_t x, size_t y);
 
     void Load(std::ifstream &in);
 

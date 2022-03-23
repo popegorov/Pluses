@@ -5,7 +5,7 @@ Crop::Crop(size_t width, size_t height) {
     new_height_ = height;
 }
 
-void Crop::Modify(Image &im) {
+void Crop::Modify(Image& im) {
     if (new_height_ < im.GetHeight() && new_width_ < im.GetWidth()) {
 
         im.GetPicture().resize(new_height_);

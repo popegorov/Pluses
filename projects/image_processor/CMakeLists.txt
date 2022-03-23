@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 
 add_executable(image_processor
+        controller.cpp
         filters/blur.cpp
         filters/crop.cpp
         filters/edge_detection.cpp

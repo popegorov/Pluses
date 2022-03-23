@@ -1,14 +1,24 @@
 #include "sharpening.h"
-#include "matrix.h"
+#include <algorithm>
 
-void Sharpening::Modify(Image &im) {
+namespace {
+
+void CheckPixel(Color& pixel) {
+    pixel.blue = std::clamp(pixel.blue, 0.0, 1.0);
+    pixel.green = std::clamp(pixel.green, 0.0, 1.0);
+    pixel.red = std::clamp(pixel.red, 0.0, 1.0);
+}
+
+} // namespace
+
+void Sharpening::Modify(Image& im) {
     Image::Picture picture_copy(im.GetPicture());
+    matrix_ = {{0, -1, 0}, {-1, 5, -1}, {0, -1, 0}};
+    ApplyMatrix(im);
 
-    for (size_t y = 0; y < im.GetHeight(); ++y) {
-        for (size_t x = 0; x < im.GetWidth(); ++x) {
-            matrix::SubtractAllNeighbours(im, picture_copy, x, y);
-            matrix::ChangeColor(im, picture_copy, x, y, x, y, 4);
-            matrix::CheckPixel(im.GetPixel(x, y));
+    for (auto& row : im.GetPicture()) {
+        for (auto& pixel : row) {
+            CheckPixel(pixel);
         }
     }
 }

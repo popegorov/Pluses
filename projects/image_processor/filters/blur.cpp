@@ -1,63 +1,67 @@
 #include "blur.h"
-#include "matrix.h"
 #include <algorithm>
 #include <cmath>
 #include <numbers>
-
 
 double pi = std::numbers::pi_v<double>;
 
 namespace {
 
-double DoGaussFunction(double val, double sigma, int c0, int c) {
-    double abs_c = abs(c0 - c);
+void CheckPixel(Color& pixel) {
+    pixel.blue = std::clamp(pixel.blue, 0.0, 1.0);
+    pixel.green = std::clamp(pixel.green, 0.0, 1.0);
+    pixel.red = std::clamp(pixel.red, 0.0, 1.0);
+}
+
+double DoGaussFunction(int sigma, int delta_c) {
     double sigma_sq = 2 * sigma * sigma;
-    return val / std::sqrt(pi * sigma_sq) / exp(abs_c * abs_c / sigma_sq);
+    return 1 / std::sqrt(pi * sigma_sq) / exp(delta_c * delta_c / sigma_sq);
 }
 
-void ChangeColorByColumns(Image &im, const Image::Picture &picture_copy, size_t x0, size_t y0, double sigma) {
-    int sigma_4 = std::ceil(sigma * 4);
-    for (size_t y = static_cast<size_t>(std::max(0, static_cast<int>(y0) - sigma_4));
-         y < std::min(picture_copy.size(), y0 + sigma_4); ++y) {
-        im.GetPixel(x0, y0)->blue += DoGaussFunction(picture_copy[y][x0].blue, sigma, y0, y);
-        im.GetPixel(x0, y0)->green += DoGaussFunction(picture_copy[y][x0].green, sigma, y0, y);
-        im.GetPixel(x0, y0)->red += DoGaussFunction(picture_copy[y][x0].red, sigma, y0, y);
+MatrixFilter::Matrix GenerateRowMatrix(int sigma) {
+    int matrix_size = sigma * 8 + 1;
+    MatrixFilter::Matrix res(1, std::vector<double>(matrix_size, 0));
+
+    int half_size = matrix_size / 2;
+    for (int i = -1 * half_size; i < half_size + 1; ++i) {
+        res[0][i + half_size] = DoGaussFunction(sigma, i);
     }
+
+    return res;
 }
 
-void ChangeColorByRows(Image &im, const Image::Picture &picture_copy, size_t x0, size_t y0, double sigma) {
-    int sigma_4 = std::ceil(sigma * 4);
-    for (size_t x = static_cast<size_t>(std::max(0, static_cast<int>(x0) - sigma_4));
-         x < std::min(picture_copy.size(), x0 + sigma_4); ++x) {
-        im.GetPixel(x0, y0)->blue += DoGaussFunction(picture_copy[y0][x].blue, sigma, x0, x);
-        im.GetPixel(x0, y0)->green += DoGaussFunction(picture_copy[y0][x].green, sigma, x0, x);
-        im.GetPixel(x0, y0)->red += DoGaussFunction(picture_copy[y0][x].red, sigma, x0, x);
+MatrixFilter::Matrix GenerateColumnMatrix(int sigma) {
+    int matrix_size = sigma * 8 + 1;
+    MatrixFilter::Matrix res(matrix_size, std::vector<double>(1, 0));
+
+    int half_size = matrix_size / 2;
+    for (int i = -1 * half_size; i < half_size + 1; ++i) {
+        res[i + half_size][0] = DoGaussFunction(sigma, i);
     }
+
+    return res;
 }
 
 } // namespace
 
-Blur::Blur(double sigma) {
+Blur::Blur(int sigma) {
     sigma_ = sigma;
 }
 
-void Blur::Modify(Image &im) {
-    Image::Picture picture_copy(im.GetPicture());
-    im.GetPicture().assign(im.GetHeight(), std::vector<Color>(im.GetWidth(), {0, 0, 0}));
-
-    for (size_t y0 = 0; y0 < im.GetHeight(); ++y0) {
-        for (size_t x0 = 0; x0 < im.GetWidth(); ++x0) {
-            ChangeColorByRows(im, picture_copy, x0, y0, sigma_);
-            matrix::CheckPixel(im.GetPixel(x0, y0));
+void Blur::Modify(Image& im) {
+    matrix_ = GenerateRowMatrix(sigma_);
+    ApplyMatrix(im);
+    for (auto& row : im.GetPicture()) {
+        for (auto& pixel : row) {
+            CheckPixel(pixel);
         }
     }
 
-    picture_copy = im.GetPicture();
-
-    for (size_t y0 = 0; y0 < im.GetHeight(); ++y0) {
-        for (size_t x0 = 0; x0 < im.GetWidth(); ++x0) {
-            ChangeColorByColumns(im, picture_copy, x0, y0, sigma_);
-            matrix::CheckPixel(im.GetPixel(x0, y0));
+    matrix_ = GenerateColumnMatrix(sigma_);
+    ApplyMatrix(im);
+    for (auto& row : im.GetPicture()) {
+        for (auto& pixel : row) {
+            CheckPixel(pixel);
         }
     }
 }

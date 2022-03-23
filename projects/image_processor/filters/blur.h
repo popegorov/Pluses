@@ -1,13 +1,13 @@
 #pragma once
 
-#include "base_filter.h"
+#include "matrix.h"
 
-class Blur : public Filter {
+class Blur : public MatrixFilter {
 public:
-    Blur(double sigma);
+    Blur(int sigma);
 
-    void Modify(Image &im) override;
+    void Modify(Image& im) override;
 
 private:
-    double sigma_;
+    int sigma_;
 };

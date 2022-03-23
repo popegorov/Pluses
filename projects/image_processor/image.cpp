@@ -110,8 +110,8 @@ std::vector<std::vector<Color>> &Image::GetPicture() {
     return picture_;
 }
 
-Color *Image::GetPixel(size_t x, size_t y) {
-    return &picture_[y][x];
+Color& Image::GetPixel(size_t x, size_t y) {
+    return picture_[y][x];
 }
 
 void Image::Load(std::ifstream &in) {

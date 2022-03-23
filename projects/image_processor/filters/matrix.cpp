@@ -1,42 +1,41 @@
 #include "matrix.h"
-#include <algorithm>
 
-void matrix::ChangeColor(Image& im, const Image::Picture& picture_copy, size_t x, size_t y, size_t new_x, size_t new_y, int val) {
-    im.GetPixel(x, y)->blue += picture_copy[new_y][new_x].blue * val;
-    im.GetPixel(x, y)->green += picture_copy[new_y][new_x].green * val;
-    im.GetPixel(x, y)->red += picture_copy[new_y][new_x].red * val;
-}
+namespace {
 
-void CheckPixel(Color *pixel) {
-    pixel->blue = std::clamp(pixel->blue, 0.0, 1.0);
-    pixel->green = std::clamp(pixel->green, 0.0, 1.0);
-    pixel->red = std::clamp(pixel->red, 0.0, 1.0);
-}
+void ChangeColor(Image& im, Image::Picture& picture, MatrixFilter::Matrix matrix, size_t x0, size_t y0) {
+    int mid_y = matrix.size() / 2;
+    int mid_x = matrix[0].size() / 2;
 
-void matrix::SubtractNeighbours(Image& im, const Image::Picture& picture_copy, size_t x, size_t y, bool is_y) {
-    for (int delta : {-1, 1}) {
-        size_t new_y, new_x;
-        if (is_y) {
-            new_y = y + delta;
-            new_x = x;
-        } else {
-            new_y = y;
-            new_x = x + delta;
-        }
+    for (int delta_y = -1 * mid_y; delta_y < mid_y + 1; ++delta_y) {
+        for (int delta_x = -1 * mid_x; delta_x < mid_x + 1; ++delta_x) {
+            auto matrix_y = mid_y + delta_y;
+            auto matrix_x = mid_x + delta_x;
+            auto cur_y = y0 + delta_y;
+            auto cur_x = x0 + delta_x;
 
-        if (new_y < im.GetHeight() && new_x < im.GetWidth()) {
-            ChangeColor(im, picture_copy, x, y, new_x, new_y, -1);
-        } else if (new_y < im.GetHeight()) {
-            ChangeColor(im, picture_copy, x, y, x, new_y, -1);
-        } else if (new_y < im.GetHeight()) {
-            ChangeColor(im, picture_copy, x, y, new_x, y, -1);
-        } else {
-            ChangeColor(im, picture_copy, x, y, x, y, -1);
+            if (cur_x >= picture[0].size()) {
+                cur_x = x0;
+            }
+            if (cur_y >= picture.size()) {
+                cur_y = y0;
+            }
+
+            im.GetPixel(x0, y0).blue += picture[cur_y][cur_x].blue * matrix[matrix_y][matrix_x];
+            im.GetPixel(x0, y0).green += picture[cur_y][cur_x].green * matrix[matrix_y][matrix_x];
+            im.GetPixel(x0, y0).red += picture[cur_y][cur_x].red * matrix[matrix_y][matrix_x];
         }
     }
 }
 
-void matrix::SubtractAllNeighbours(Image& im, const Image::Picture& picture_copy, size_t x, size_t y) {
-    SubtractNeighbours(im, picture_copy, x, y, false);
-    SubtractNeighbours(im, picture_copy, x, y, true);
+}  // namespace
+
+void MatrixFilter::ApplyMatrix(Image& im) {
+    auto picture_copy = im.GetPicture();
+    im.GetPicture().assign(im.GetHeight(), std::vector<Color>(im.GetWidth()));
+
+    for (size_t y = 0; y < im.GetHeight(); ++y) {
+        for (size_t x = 0; x < im.GetWidth(); ++x) {
+            ChangeColor(im, picture_copy, matrix_, x, y);
+        }
+    }
 }

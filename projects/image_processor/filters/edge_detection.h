@@ -1,12 +1,12 @@
 #pragma once
 
-#include "base_filter.h"
+#include "matrix.h"
 
-class EdgeDetection : public Filter {
+class EdgeDetection : public MatrixFilter {
 public:
     EdgeDetection(double threshold);
 
-    void Modify(Image &im) override;
+    void Modify(Image& im) override;
 
 private:
     double threshold_;

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "base_filter.h"
+#include "matrix.h"
 
-class Sharpening : public Filter {
+class Sharpening : public MatrixFilter {
 public:
-    void Modify(Image &im) override;
+    void Modify(Image& im) override;
 };

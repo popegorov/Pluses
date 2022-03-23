@@ -4,5 +4,5 @@
 
 class Negative : public Filter {
 public:
-    void Modify(Image &im) override;
+    void Modify(Image& im) override;
 };
