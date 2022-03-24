@@ -2,7 +2,7 @@
 
 namespace {
 
-void ChangeColor(Image& im, Image::Picture& picture, MatrixFilter::Matrix matrix, size_t x0, size_t y0) {
+void ChangeColor(Image& im, const Image::Picture& picture, const MatrixFilter::Matrix& matrix, size_t x0, size_t y0) {
     int mid_y = matrix.size() / 2;
     int mid_x = matrix[0].size() / 2;
 
@@ -29,13 +29,17 @@ void ChangeColor(Image& im, Image::Picture& picture, MatrixFilter::Matrix matrix
 
 }  // namespace
 
+MatrixFilter::MatrixFilter(MatrixFilter::Matrix m) : matrix_(m) {}
+
 void MatrixFilter::ApplyMatrix(Image& im) {
+    Image new_im(im.GetWidth(), im.GetHeight());
     auto picture_copy = im.GetPicture();
-    im.GetPicture().assign(im.GetHeight(), std::vector<Color>(im.GetWidth()));
 
     for (size_t y = 0; y < im.GetHeight(); ++y) {
         for (size_t x = 0; x < im.GetWidth(); ++x) {
-            ChangeColor(im, picture_copy, matrix_, x, y);
+            ChangeColor(new_im, picture_copy, matrix_, x, y);
         }
     }
+
+    im = new_im;
 }

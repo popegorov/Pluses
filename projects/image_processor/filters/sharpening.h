@@ -4,5 +4,6 @@
 
 class Sharpening : public MatrixFilter {
 public:
+    Sharpening();
     void Modify(Image& im) override;
 };

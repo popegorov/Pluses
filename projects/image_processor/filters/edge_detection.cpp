@@ -15,19 +15,16 @@ void ApplyThreshold(Color& pixel, double threshold) {
     }
 }
 
-} // namespace
+}  // namespace
 
-EdgeDetection::EdgeDetection(double threshold) {
-    threshold_ = threshold;
+EdgeDetection::EdgeDetection(double threshold)
+    : MatrixFilter({{0, -1, 0}, {-1, 4, -1}, {0, -1, 0}}), threshold_(threshold) {
 }
 
 void EdgeDetection::Modify(Image& im) {
     GrayScale g;
     g.Modify(im);
 
-    Image::Picture picture_copy(im.GetPicture());
-
-    matrix_ = {{0, -1, 0}, {-1, 4, -1}, {0, -1, 0}};
     ApplyMatrix(im);
 
     for (auto& row : im.GetPicture()) {

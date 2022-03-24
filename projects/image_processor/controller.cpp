@@ -6,57 +6,52 @@
 #include "filters/grayscale.h"
 #include "filters/negative.h"
 #include "filters/sharpening.h"
-#include <cctype>
-#include <string>
+#include <memory>
 
 namespace {
 
-bool IsInteger(const char* arg) {
-    std::string str = arg;
-    return std::all_of(str.begin(), str.end(), [](char c){return isdigit(c);});
-}
-
-bool IsDouble(const char* arg) {
-    std::string str = arg;
-    return std::all_of(str.begin(), str.end(), [](char c){return (isdigit(c) || c == '-' || c == '.');});
-}
-
-int NextArgToInt(int argc, char**& argv, size_t i) {
+int NextArgToInt(int argc, std::vector<std::string>& argv, size_t i) {
     if (i + 1 >= argc) {
         throw IncorrectFilterInformation();
     }
-    auto next_arg = argv[++i];
-    if (!IsInteger(next_arg)) {
+    try {
+        return std::stoi(argv[++i]);
+    } catch (std::invalid_argument e) {
         throw IncorrectFilterInformation();
     }
-    return std::atoi(next_arg);
 }
 
-double NextArgToDouble(int argc, char**& argv, size_t i) {
+double NextArgToDouble(int argc, std::vector<std::string>& argv, size_t i) {
     if (i + 1 >= argc) {
         throw IncorrectFilterInformation();
     }
-    auto next_arg = argv[++i];
-    if (!IsDouble(next_arg)) {
+    try {
+        return std::stof(argv[++i]);
+    } catch (std::invalid_argument e) {
         throw IncorrectFilterInformation();
     }
-    return std::atof(next_arg);
+}
+
+void Modify(const std::vector<std::unique_ptr<Filter>>& to_do, Image& im) {
+    for (const auto& filter: to_do) {
+        filter->Modify(im);
+    }
 }
 
 } // namespace
 
-Controller::Controller(int argc, char** &argv) {
+Controller::Controller(int argc, std::vector<std::string>& argv) {
     argc_ = argc;
     argv_ = argv;
     im_ = Image();
 }
 
-void Controller::Load() {
-    if (argc_ < 3) {
+void Controller::Load(char*& arg) {
+    if (argc_ < 0) {
         throw IncorrectInputOrOutputData();
     }
 
-    std::ifstream input(argv_[1], std::ios::binary);
+    std::ifstream input(arg, std::ios::binary);
     if (!input) {
         throw IncorrectInputOrOutputData();
     }
@@ -65,9 +60,9 @@ void Controller::Load() {
 }
 
 void Controller::ApplyFilters() {
-    std::vector<Filter *> filters_to_do;
-    for (int i = 3; i < argc_; ++i) {
-        auto cur_arg = static_cast<std::string>(argv_[i]);
+    std::vector<std::unique_ptr<Filter>> filters_to_do;
+    for (int i = 0; i < argc_; ++i) {
+        auto cur_arg = argv_[i];
         if (cur_arg == "-blur") {
 
             auto sigma = NextArgToInt(argc_, argv_, i);
@@ -77,8 +72,7 @@ void Controller::ApplyFilters() {
                 throw IncorrectFilterInformation();
             }
 
-            auto blur = new Blur(sigma);
-            filters_to_do.push_back(blur);
+            filters_to_do.push_back(std::make_unique<Blur>(sigma));
 
         } else if (cur_arg == "-crop") {
 
@@ -91,31 +85,26 @@ void Controller::ApplyFilters() {
                 throw IncorrectFilterInformation();
             }
 
-            auto crop = new Crop(width, height);
-            filters_to_do.push_back(crop);
+            filters_to_do.push_back(std::make_unique<Crop>(width, height));
 
         } else if (cur_arg == "-edge") {
 
             auto threshold = NextArgToDouble(argc_, argv_, i);
             ++i;
 
-            auto edge_detection = new EdgeDetection(threshold);
-            filters_to_do.push_back(edge_detection);
+            filters_to_do.push_back(std::make_unique<EdgeDetection>(threshold));
 
         } else if (cur_arg == "-gs") {
 
-            auto grayscale = new GrayScale();
-            filters_to_do.push_back(grayscale);
+            filters_to_do.push_back(std::make_unique<GrayScale>());
 
         } else if (cur_arg == "-neg") {
 
-            auto negative = new Negative();
-            filters_to_do.push_back(negative);
+            filters_to_do.push_back(std::make_unique<Negative>());
 
         } else if (cur_arg == "-sharp") {
 
-            auto sharpening = new Sharpening();
-            filters_to_do.push_back(sharpening);
+            filters_to_do.push_back(std::make_unique<Sharpening>());
 
         } else {
 
@@ -124,16 +113,14 @@ void Controller::ApplyFilters() {
         }
     }
 
-    for (auto filter: filters_to_do) {
-        filter->Modify(im_);
-        delete filter;
-    }
+    Modify(filters_to_do, im_);
 }
 
-void Controller::Save() {
-    std::ofstream output(argv_[2], std::ios::binary);
+void Controller::Save(char*& arg) {
+    std::ofstream output(arg, std::ios::binary);
     if (!output) {
         throw IncorrectInputOrOutputData();
     }
     im_.Save(output);
 }
+

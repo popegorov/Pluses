@@ -1,19 +1,20 @@
 #pragma once
 
 #include "image.h"
+#include <string>
 
 class Controller {
 public:
-    Controller(int argc, char**& argv);
+    Controller(int argc, std::vector<std::string>& argv);
 
-    void Load();
+    void Load(char*& arg);
 
     void ApplyFilters();
 
-    void Save();
+    void Save(char*& arg);
 
 private:
     int argc_;
-    char** argv_;
+    std::vector<std::string> argv_;
     Image im_;
 };

@@ -1,17 +1,10 @@
 #include "blur.h"
-#include <algorithm>
 #include <cmath>
 #include <numbers>
 
 double pi = std::numbers::pi_v<double>;
 
 namespace {
-
-void CheckPixel(Color& pixel) {
-    pixel.blue = std::clamp(pixel.blue, 0.0, 1.0);
-    pixel.green = std::clamp(pixel.green, 0.0, 1.0);
-    pixel.red = std::clamp(pixel.red, 0.0, 1.0);
-}
 
 double DoGaussFunction(int sigma, int delta_c) {
     double sigma_sq = 2 * sigma * sigma;
@@ -53,7 +46,7 @@ void Blur::Modify(Image& im) {
     ApplyMatrix(im);
     for (auto& row : im.GetPicture()) {
         for (auto& pixel : row) {
-            CheckPixel(pixel);
+            pixel.Clamp();
         }
     }
 
@@ -61,7 +54,7 @@ void Blur::Modify(Image& im) {
     ApplyMatrix(im);
     for (auto& row : im.GetPicture()) {
         for (auto& pixel : row) {
-            CheckPixel(pixel);
+            pixel.Clamp();
         }
     }
 }
