@@ -65,7 +65,7 @@ void Controller::ApplyFilters() {
         auto cur_arg = argv_[i];
         if (cur_arg == "-blur") {
 
-            auto sigma = NextArgToInt(argc_, argv_, i);
+            auto sigma = NextArgToDouble(argc_, argv_, i);
             ++i;
 
             if (!sigma) {

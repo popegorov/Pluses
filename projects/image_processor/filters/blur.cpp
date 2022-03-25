@@ -6,13 +6,13 @@ double pi = std::numbers::pi_v<double>;
 
 namespace {
 
-double DoGaussFunction(int sigma, int delta_c) {
+double DoGaussFunction(double sigma, int delta_c) {
     double sigma_sq = 2 * sigma * sigma;
     return 1 / std::sqrt(pi * sigma_sq) / exp(delta_c * delta_c / sigma_sq);
 }
 
-MatrixFilter::Matrix GenerateRowMatrix(int sigma) {
-    int matrix_size = sigma * 8 + 1;
+MatrixFilter::Matrix GenerateRowMatrix(double sigma) {
+    int matrix_size = static_cast<int>(sigma) * 8 + 1;
     MatrixFilter::Matrix res(1, std::vector<double>(matrix_size, 0));
 
     int half_size = matrix_size / 2;
@@ -23,8 +23,8 @@ MatrixFilter::Matrix GenerateRowMatrix(int sigma) {
     return res;
 }
 
-MatrixFilter::Matrix GenerateColumnMatrix(int sigma) {
-    int matrix_size = sigma * 8 + 1;
+MatrixFilter::Matrix GenerateColumnMatrix(double sigma) {
+    int matrix_size = static_cast<int>(sigma) * 8 + 1;
     MatrixFilter::Matrix res(matrix_size, std::vector<double>(1, 0));
 
     int half_size = matrix_size / 2;
@@ -37,7 +37,7 @@ MatrixFilter::Matrix GenerateColumnMatrix(int sigma) {
 
 } // namespace
 
-Blur::Blur(int sigma) {
+Blur::Blur(double sigma) {
     sigma_ = sigma;
 }
 

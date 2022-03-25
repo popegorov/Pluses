@@ -4,10 +4,10 @@
 
 class Blur : public MatrixFilter {
 public:
-    Blur(int sigma);
+    Blur(double sigma);
 
     void Modify(Image& im) override;
 
 private:
-    int sigma_;
+    double sigma_;
 };
